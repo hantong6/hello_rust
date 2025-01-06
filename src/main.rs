@@ -10,6 +10,7 @@ mod pattern;
 mod vec;
 mod hashmap;
 mod result_and_option;
+mod box1;
 
 fn main() {
     println!("Hello, rust!");
@@ -25,4 +26,5 @@ fn main() {
     vec::exec();
     hashmap::exec();
     result_and_option::exec();
+    box1::exec();
 }
