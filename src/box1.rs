@@ -1,11 +1,9 @@
-use std::cmp::PartialEq;
 use std::time::Instant;
-use serde_json::Value::String;
 use crate::box1::NodeType::{File, Folder};
 
 pub fn exec() {
     box_array();
-
+    test_file_system();
 }
 
 fn box_array() {
@@ -40,29 +38,41 @@ impl FolderNode {
     fn add_child(&mut self, folder_node: FolderNode) {
         self.children.push(folder_node);
     }
+
+    fn get_child(&mut self, name: &str) -> Option<&mut FolderNode> {
+        if self.children.is_empty() {
+            return None;
+        }
+        for child in self.children.iter() {
+            if child.name == name {
+                return Some(child);
+            }
+        }
+        None
+    }
 }
 
 trait FileSystem {
-    fn create_file(parent: &mut FolderNode, name: &str);
-    fn create_folder(parent: &mut FolderNode, name: &str);
-    fn list_contents(parent: &FolderNode);
+    fn create_file(&mut self, name: &str);
+    fn create_folder(&mut self, name: &str);
+    fn list_contents(&self);
 }
 
 impl FileSystem for FolderNode {
 
-    fn create_file(parent: &mut FolderNode, name: &str) {
+    fn create_file(&mut self, name: &str) {
         let node = FolderNode::new(name.to_string(), File);
-        parent.add_child(node);
+        self.add_child(node);
     }
 
-    fn create_folder(parent: &mut FolderNode, name: &str) {
+    fn create_folder(&mut self, name: &str) {
         let node = FolderNode::new(name.to_string(), Folder);
-        parent.add_child(node);
+        self.add_child(node);
     }
 
-    fn list_contents(parent: &FolderNode) {
-        println!("{} content is follow:", parent.name);
-        print_children(parent, 0);
+    fn list_contents(&self) {
+        println!("{} content is follow:", self.name);
+        print_children(self, 0);
 
         fn print_children(node: &FolderNode, depth: usize) {
             if node.children.is_empty() { 
@@ -71,7 +81,10 @@ impl FileSystem for FolderNode {
             for child in node.children.iter() {
                 match child.node_type {
                     File => println!("{}{}", " ".repeat(depth), child.name),
-                    Folder => print_children(child, depth + 1)
+                    Folder => {
+                        println!("{}{}", " ".repeat(depth), child.name);
+                        print_children(child, depth + 1);
+                    }
                 }
             }
         }
@@ -79,6 +92,16 @@ impl FileSystem for FolderNode {
 }
 
 fn test_file_system() {
-    let folder_node = FolderNode::new("init", Folder);
-    
+    let mut folder_node = FolderNode::new("init".to_string(), Folder);
+    folder_node.create_file("111");
+    folder_node.create_file("222");
+    folder_node.create_folder("333");
+    let mut folder333 = folder_node.get_child("333").unwrap();
+    folder333.create_file("3331");
+    folder333.create_file("3332");
+    folder333.create_folder("3333");
+    let mut folder3333 = folder333.get_child("3333").unwrap();
+    folder3333.create_file("33331");
+    folder3333.create_file("33332");
+    folder_node.list_contents();
 }
