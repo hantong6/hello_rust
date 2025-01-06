@@ -10,6 +10,14 @@ mod pattern;
 mod vec;
 mod hashmap;
 mod result_and_option;
+mod box1;
+mod lifetime;
+mod rc;
+mod trait1;
+mod macro1;
+mod closure;
+mod iterator;
+mod thread;
 
 fn main() {
     println!("Hello, rust!");
@@ -25,4 +33,12 @@ fn main() {
     vec::exec();
     hashmap::exec();
     result_and_option::exec();
+    box1::exec();
+    lifetime::exec();
+    rc::exec();
+    trait1::exec();
+    macro1::exec();
+    closure::exec();
+    iterator::exec();
+    thread::exec();
 }
