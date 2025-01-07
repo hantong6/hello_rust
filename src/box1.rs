@@ -43,7 +43,7 @@ impl FolderNode {
         if self.children.is_empty() {
             return None;
         }
-        for child in self.children.iter() {
+        for child in self.children.iter_mut() {
             if child.name == name {
                 return Some(child);
             }
@@ -80,9 +80,9 @@ impl FileSystem for FolderNode {
             }
             for child in node.children.iter() {
                 match child.node_type {
-                    File => println!("{}{}", " ".repeat(depth), child.name),
+                    File => println!("{}{}", "---".repeat(depth), child.name),
                     Folder => {
-                        println!("{}{}", " ".repeat(depth), child.name);
+                        println!("{}{}", "---".repeat(depth), child.name);
                         print_children(child, depth + 1);
                     }
                 }
@@ -98,10 +98,10 @@ fn test_file_system() {
     folder_node.create_folder("333");
     let mut folder333 = folder_node.get_child("333").unwrap();
     folder333.create_file("3331");
-    folder333.create_file("3332");
-    folder333.create_folder("3333");
-    let mut folder3333 = folder333.get_child("3333").unwrap();
-    folder3333.create_file("33331");
-    folder3333.create_file("33332");
+    folder333.create_folder("3332");
+    folder333.create_file("3333");
+    let mut folder3333 = folder333.get_child("3332").unwrap();
+    folder3333.create_file("33321");
+    folder3333.create_file("33322");
     folder_node.list_contents();
 }
