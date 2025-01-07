@@ -11,6 +11,7 @@ mod vec;
 mod hashmap;
 mod result_and_option;
 mod box1;
+mod lifetime;
 
 fn main() {
     println!("Hello, rust!");
@@ -27,4 +28,5 @@ fn main() {
     hashmap::exec();
     result_and_option::exec();
     box1::exec();
+    lifetime::exec();
 }
