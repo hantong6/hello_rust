@@ -1,5 +1,8 @@
 pub fn exec() {
     test_lifetime_multiple();
+    lifetime();
+    lifetime1();
+    lifetime2();
 }
 
 fn test_lifetime_multiple() {
@@ -17,4 +20,92 @@ fn test_lifetime_multiple() {
     insert_value(b, &val2);
     println!("b is {:?}", b);
     println!("my_vec is {:?}", my_vec);
+}
+
+#[derive(Debug)]
+struct Borrowed<'a>(&'a i32);
+
+#[derive(Debug)]
+struct NamedBorrowed<'a> {
+    x: &'a i32,
+    y: &'a i32,
+}
+
+#[derive(Debug)]
+enum Either<'a> {
+    Num(i32),
+    Ref(&'a i32),
+}
+
+fn lifetime() {
+    let x = 18;
+    let y = 15;
+
+    let single = Borrowed(&x);
+    let double = NamedBorrowed { x: &x, y: &y };
+    let reference = Either::Ref(&x);
+    let number    = Either::Num(y);
+
+    println!("x is borrowed in {:?}", single);
+    println!("x and y are borrowed in {:?}", double);
+    println!("x is borrowed in {:?}", reference);
+    println!("y is *not* borrowed in {:?}", number);
+}
+
+#[derive(Debug)]
+struct NoCopyType {}
+
+#[derive(Debug)]
+struct Example<'a, 'b> {
+    a: &'a u32,
+    b: &'b NoCopyType
+}
+
+fn lifetime1() {
+    let var_a = 35;
+    let example: Example;
+
+    //   {
+    let var_b = NoCopyType {};
+
+    /* 修复错误 */
+    example = Example { a: &var_a, b: &var_b };
+    //   }
+
+    println!("(Success!) {:?}", example);
+}
+
+fn lifetime2() {
+    let no_copy = NoCopyType {};
+    let example = Example { a: &1, b: &no_copy };
+    fix_me(&example);
+    println!("Success!");
+    fn fix_me<'b>(foo: &Example<'_, 'b>) -> &'b NoCopyType {
+        foo.b
+    }
+}
+
+fn nput(x: &i32) {
+    println!("`annotated_input`: {}", x);
+}
+
+fn pass(x: &i32) -> &i32 { x }
+
+fn longest<'a, 'b>(x: &'a str, y: &'b str) -> &'a str {
+    x
+}
+
+struct Owner(i32);
+
+impl Owner {
+    // Annotate lifetimes as in a standalone function.
+    fn add_one(&mut self) { self.0 += 1; }
+    fn print(&self) {
+        println!("`print`: {}", self.0);
+    }
+}
+
+struct Person<'a> {
+    age: u8,
+    name: &'a str,
 }
