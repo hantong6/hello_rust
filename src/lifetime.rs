@@ -109,3 +109,50 @@ struct Person<'a> {
     age: u8,
     name: &'a str,
 }
+
+#[derive(Debug)]
+struct Config {
+    a: String,
+    b: String,
+}
+static mut CONFIG: Option<&mut Config> = None;
+
+/* 让代码工作，但不要修改函数的签名 */
+fn init() -> Option<&'static mut Config> {
+    let val = Box::new(Config {
+        a: "A".to_string(),
+        b: "B".to_string(),
+    });
+    Some(Box::leak(val))
+}
+
+fn lifetime3() {
+    unsafe {
+        CONFIG = init();
+        println!("{:?}", CONFIG)
+    }
+}
+
+use std::fmt::Debug;
+
+fn print_it<T: Debug + 'static>( input: T) {
+    println!( "'static value passed in is: {:?}", input );
+}
+
+fn print_it1( input: impl Debug + 'static ) {
+    println!( "'static value passed in is: {:?}", input );
+}
+
+fn print_it2<T: Debug + 'static>( input: &T) {
+    println!( "'static value passed in is: {:?}", input );
+}
+
+fn lifetime4() {
+    // i 是有所有权的数据，并没有包含任何引用，因此它是 'static
+    let i = 5;
+    print_it(i);
+    // 但是 &i 是一个引用，生命周期受限于作用域，因此它不是 'static
+    // print_it(&i);
+    // print_it1(&i);
+    print_it2(&i);
+}
