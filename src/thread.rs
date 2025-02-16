@@ -45,7 +45,7 @@ fn multi_thread_file_process() {
         }));
     }
 
-    for item in fs::read_dir("C:\\Users\\hantong6\\Downloads").unwrap() {
+    for item in fs::read_dir("/home/hantong/work/hello_rust").unwrap() {
         let file_name = item.unwrap().file_name().into_string().unwrap();
         sender.send(TaskMsg::Task(file_name.clone())).expect("failed to send file name");
         println!("send {} success!", file_name);
