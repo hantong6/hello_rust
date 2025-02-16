@@ -18,6 +18,7 @@ mod macro1;
 mod closure;
 mod iterator;
 mod thread;
+mod solana;
 
 fn main() {
     println!("Hello, rust!");
@@ -41,4 +42,5 @@ fn main() {
     closure::exec();
     iterator::exec();
     thread::exec();
+    solana::exec();
 }
